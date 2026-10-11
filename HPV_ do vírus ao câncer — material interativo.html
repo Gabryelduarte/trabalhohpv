@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HPV: do vírus ao câncer — material interativo</title>
+<style>
+:root{
+  --bg:#f6f4fb; --card:#ffffff; --text:#1f1b2e; --muted:#5d5873; --border:#e2ddf0;
+  --accent:#6d28d9; --accent-soft:#ede6fb; --accent-text:#ffffff;
+  --ok:#15803d; --ok-soft:#e3f5e8; --bad:#b91c1c; --bad-soft:#fde8e8; --warn-soft:#fff4d6;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#15121f; --card:#1f1b2e; --text:#f1eefb; --muted:#b4aecb; --border:#352f4d;
+    --accent:#a78bfa; --accent-soft:#2c2547; --accent-text:#15121f;
+    --ok:#4ade80; --ok-soft:#173424; --bad:#f87171; --bad-soft:#3a1d1f; --warn-soft:#3a3114;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#15121f; --card:#1f1b2e; --text:#f1eefb; --muted:#b4aecb; --border:#352f4d;
+  --accent:#a78bfa; --accent-soft:#2c2547; --accent-text:#15121f;
+  --ok:#4ade80; --ok-soft:#173424; --bad:#f87171; --bad-soft:#3a1d1f; --warn-soft:#3a3114;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;font-size:17px}
+body.big{font-size:21px}
+.wrap{max-width:900px;margin:0 auto;padding:16px 16px 48px}
+header.hero{padding:18px 4px 6px}
+.hero h1{margin:0 0 6px;font-size:1.7em;line-height:1.2}
+.hero p{margin:0;color:var(--muted)}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.chip-btn{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:8px 14px;font-size:.85em;cursor:pointer}
+nav.tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 0;margin:6px 0 10px;-webkit-overflow-scrolling:touch}
+nav.tabs button{flex:0 0 auto;border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:12px;padding:10px 14px;font-size:.92em;cursor:pointer;min-height:44px;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-text);border-color:var(--accent);font-weight:600}
+.panel{display:none}
+.panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin:12px 0}
+.card h2{margin:0 0 8px;font-size:1.3em}
+.card h3{margin:0 0 6px;font-size:1.08em}
+.muted{color:var(--muted)}
+.small{font-size:.85em}
+.btn{border:0;border-radius:12px;padding:13px 18px;font-size:1em;cursor:pointer;min-height:48px;font-weight:600;background:var(--accent);color:var(--accent-text)}
+.btn.sec{background:var(--accent-soft);color:var(--text)}
+.btn.ok{background:var(--ok);color:#fff}
+.btn.bad{background:var(--bad);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>.btn{flex:1 1 140px}
+.progress{height:8px;border-radius:999px;background:var(--accent-soft);overflow:hidden;margin:6px 0 14px}
+.progress>i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.statement{font-size:1.25em;font-weight:600;margin:10px 0 16px}
+.feedback{border-radius:12px;padding:14px;margin-top:14px}
+.feedback.right{background:var(--ok-soft);border:1px solid var(--ok)}
+.feedback.wrong{background:var(--bad-soft);border:1px solid var(--bad)}
+.feedback b.t{display:block;margin-bottom:4px}
+.src{font-size:.8em;color:var(--muted);margin-top:6px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-top:10px}
+.fact{background:var(--accent-soft);border-radius:12px;padding:12px}
+.fact strong{display:block;font-size:1.25em;color:var(--accent)}
+.stepper{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.stepper button{border:2px solid var(--border);background:var(--card);color:var(--text);border-radius:14px;padding:12px 6px;cursor:pointer;font-size:.9em;min-height:64px;line-height:1.2}
+.stepper button .n{display:block;font-size:1.3em}
+.stepper button[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+@media (max-width:520px){.stepper{grid-template-columns:repeat(2,1fr)}}
+.tag{display:inline-block;background:var(--accent-soft);border-radius:999px;padding:3px 10px;font-size:.8em;margin:0 6px 6px 0}
+.tag.warn{background:var(--warn-soft)}
+ul.tight{margin:6px 0 0;padding-left:20px}
+ul.tight li{margin:4px 0}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.opt{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:12px;padding:10px 14px;cursor:pointer;min-height:46px;font-size:.95em}
+.opt .cnt{display:inline-block;min-width:22px;margin-left:8px;padding:1px 7px;border-radius:999px;background:var(--accent-soft);font-weight:700;font-size:.85em}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.bars{margin-top:8px}
+.bar{display:flex;align-items:center;gap:8px;font-size:.82em;margin:3px 0}
+.bar span.l{flex:0 0 150px}
+.bar span.b{flex:1;background:var(--accent-soft);border-radius:6px;height:12px;overflow:hidden}
+.bar span.b i{display:block;height:100%;background:var(--accent);width:0}
+.info{background:var(--accent-soft);border-radius:12px;padding:14px;margin-top:12px}
+details{border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-top:10px;background:var(--card)}
+summary{cursor:pointer;font-weight:600}
+footer.src-box{margin-top:26px;font-size:.88em;color:var(--muted)}
+footer.src-box h3{color:var(--text)}
+.callout{background:var(--warn-soft);border-radius:12px;padding:12px 14px;margin-top:12px;font-size:.92em}
+.score{font-size:2.2em;font-weight:800;color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>HPV: do vírus ao câncer</h1>
+    <p>Material interativo de perguntas e respostas para adolescentes. Conteúdo baseado no Ministério da Saúde, no INCA e na OMS.</p>
+    <div class="toolbar">
+      <button class="chip-btn" id="bigBtn" type="button">Modo palestra (letras maiores)</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Seções">
+    <button role="tab" data-tab="mito" aria-selected="true">1 · Mito ou verdade</button>
+    <button role="tab" data-tab="info" aria-selected="false">2 · Do vírus ao câncer</button>
+    <button role="tab" data-tab="prev" aria-selected="false">3 · Prevenção</button>
+    <button role="tab" data-tab="perg" aria-selected="false">4 · Perguntas finais</button>
+    <button role="tab" data-tab="conv" aria-selected="false">5 · Roda de conversa</button>
+  </nav>
+
+  <section class="panel active" id="tab-mito"></section>
+  <section class="panel" id="tab-info"></section>
+  <section class="panel" id="tab-prev"></section>
+  <section class="panel" id="tab-perg"></section>
+  <section class="panel" id="tab-conv"></section>
+
+  <footer class="src-box">
+    <h3>Fontes de referência</h3>
+    <ul class="tight">
+      <li>Ministério da Saúde: gov.br/saude (páginas sobre HPV, vacinação e Programa Nacional de Imunizações).</li>
+      <li>INCA – Instituto Nacional de Câncer: gov.br/inca (HPV, câncer do colo do útero e detecção precoce).</li>
+      <li>OMS – Organização Mundial da Saúde: who.int (HPV, câncer do colo do útero e Estratégia Global de Eliminação).</li>
+    </ul>
+    <p>Material educativo. Não substitui a avaliação de um profissional de saúde. Esquemas de vacinação, faixas etárias e protocolos de rastreamento podem ser atualizados: confirme na UBS ou em gov.br/saude antes de apresentar. Conteúdo conferido em outubro de 2026.</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  function h(tag, attrs){
+    var e = document.createElement(tag);
+    attrs = attrs || {};
+    Object.keys(attrs).forEach(function(k){
+      var v = attrs[k];
+      if(k === "class") e.className = v;
+      else if(k.indexOf("on") === 0) e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v);
+    });
+    for(var i = 2; i < arguments.length; i++){
+      var kids = [].concat(arguments[i]);
+      kids.forEach(function(c){
+        if(c === null || c === undefined) return;
+        e.append(c.nodeType ? c : document.createTextNode(c));
+      });
+    }
+    return e;
+  }
+  function clear(n){ while(n.firstChild) n.removeChild(n.firstChild); }
+  function ul(items){ return h("ul", {class:"tight"}, items.map(function(t){ return h("li", {}, t); })); }
+
+  /* ---------- Tabs ---------- */
+  var tabBtns = document.querySelectorAll("nav.tabs button");
+  tabBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      tabBtns.forEach(function(x){ x.setAttribute("aria-selected", x === b ? "true" : "false"); });
+      document.querySelectorAll(".panel").forEach(function(p){ p.classList.remove("active"); });
+      document.getElementById("tab-" + b.getAttribute("data-tab")).classList.add("active");
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+  });
+  document.getElementById("bigBtn").addEventListener("click", function(){
+    document.body.classList.toggle("big");
+  });
+
+  /* ---------- 1. Mito ou verdade ---------- */
+  var MITOS = [
+    {t:"O HPV só atinge mulheres.", v:false,
+     e:"Homens e mulheres se infectam e transmitem o vírus. Nos homens, o HPV pode causar verrugas genitais e está ligado a cânceres de pênis, ânus e orofaringe (boca e garganta).", s:"Ministério da Saúde · INCA"},
+    {t:"A maioria das infecções por HPV desaparece sozinha, sem causar problemas.", v:true,
+     e:"Na maior parte das pessoas, o sistema imunológico elimina o vírus naturalmente, em geral em até 2 anos. O risco está nas infecções que persistem.", s:"OMS · INCA"},
+    {t:"Ter HPV significa que a pessoa vai ter câncer.", v:false,
+     e:"Não. O câncer só pode surgir quando uma infecção por tipo de alto risco persiste por muitos anos e provoca lesões que não são detectadas nem tratadas.", s:"INCA · OMS"},
+    {t:"Só pega HPV quem tem muitos parceiros sexuais.", v:false,
+     e:"Qualquer pessoa que tenha vida sexual pode se infectar, mesmo com um único parceiro. O vírus pode estar presente sem sintomas, e a pessoa pode transmitir sem saber.", s:"Ministério da Saúde · INCA"},
+    {t:"O HPV pode ser transmitido sem penetração.", v:true,
+     e:"A transmissão acontece por contato direto de pele ou mucosa com a área infectada durante a relação sexual (vaginal, anal ou oral). Por isso a penetração não é indispensável.", s:"Ministério da Saúde"},
+    {t:"A camisinha reduz o risco de HPV, mas não protege 100%.", v:true,
+     e:"O preservativo diminui o risco e protege contra outras ISTs, mas o HPV pode estar em áreas que a camisinha não cobre. Por isso ela deve ser usada sempre, junto com a vacina.", s:"Ministério da Saúde · INCA"},
+    {t:"A vacina contra o HPV é só para meninas.", v:false,
+     e:"O SUS vacina meninos e meninas de 9 a 14 anos. Nos meninos, a vacina protege contra verrugas genitais e cânceres associados ao vírus, além de reduzir a circulação do HPV.", s:"Ministério da Saúde"},
+    {t:"Quem tomou a vacina não precisa mais fazer o exame preventivo.", v:false,
+     e:"A vacina disponível no SUS protege contra 4 tipos de HPV (6, 11, 16 e 18), não contra todos os tipos de alto risco. Ao chegar à idade indicada, o rastreamento continua necessário.", s:"Ministério da Saúde · INCA"},
+    {t:"A vacina contra o HPV estimula o início da vida sexual mais cedo.", v:false,
+     e:"Não há evidência disso. A vacina é indicada cedo porque protege melhor quando aplicada antes do primeiro contato com o vírus.", s:"OMS"},
+    {t:"O preventivo (Papanicolau) serve para encontrar alterações nas células do colo do útero antes de virarem câncer.", v:true,
+     e:"É isso mesmo. O exame detecta lesões precursoras, que podem ser tratadas, e por isso evita que o câncer se desenvolva.", s:"INCA"}
+  ];
+  var mState = {i:0, score:0};
+  var mRoot = document.getElementById("tab-mito");
+
+  function renderMito(){
+    clear(mRoot);
+    var N = MITOS.length;
+    if(mState.i >= N){
+      mRoot.append(h("div", {class:"card"},
+        h("h2", {}, "Fim do mito ou verdade!"),
+        h("div", {class:"score"}, mState.score + " / " + N),
+        h("p", {}, mState.score >= 8 ? "Excelente! Você já sabe bastante sobre HPV." : (mState.score >= 5 ? "Muito bem! Agora vamos ver o que ainda pode surpreender." : "Tudo bem errar: é por isso que existe a conversa. Siga para a próxima seção.")),
+        h("div", {class:"row"},
+          h("button", {class:"btn", type:"button", onclick:function(){ mState = {i:0, score:0}; renderMito(); }}, "Jogar de novo"),
+          h("button", {class:"btn sec", type:"button", onclick:function(){ document.querySelector('nav.tabs button[data-tab="info"]').click(); }}, "Ir para: do vírus ao câncer")
+        )
+      ));
+      return;
+    }
+    var q = MITOS[mState.i];
+    var card = h("div", {class:"card"});
+    var bar = h("div", {class:"progress"}, h("i", {}));
+    bar.firstChild.style.width = ((mState.i) / N * 100) + "%";
+    card.append(
+      h("div", {class:"muted small"}, "Afirmação " + (mState.i + 1) + " de " + N + " · Acertos: " + mState.score),
+      bar,
+      h("div", {class:"statement"}, "“" + q.t + "”")
+    );
+    var fb = h("div", {});
+    var btnV = h("button", {class:"btn ok", type:"button"}, "✔ Verdade");
+    var btnM = h("button", {class:"btn bad", type:"button"}, "✖ Mito");
+    var next = h("button", {class:"btn", type:"button", style:"margin-top:14px;display:none", onclick:function(){ mState.i++; renderMito(); }}, mState.i === N - 1 ? "Ver resultado" : "Próxima →");
+    function answer(choice){
+      btnV.disabled = true; btnM.disabled = true;
+      var right = (choice === q.v);
+      if(right) mState.score++;
+      clear(fb);
+      fb.append(h("div", {class:"feedback " + (right ? "right" : "wrong")},
+        h("b", {class:"t"}, (right ? "Acertou! " : "Quase! ") + "Isto é " + (q.v ? "VERDADE." : "MITO.")),
+        h("div", {}, q.e),
+        h("div", {class:"src"}, "Base: " + q.s)
+      ));
+      next.style.display = "inline-block";
+    }
+    btnV.addEventListener("click", function(){ answer(true); });
+    btnM.addEventListener("click", function(){ answer(false); });
+    card.append(h("div", {class:"row"}, btnV, btnM), fb, next);
+    mRoot.append(card);
+  }
+  renderMito();
+
+  /* ---------- 2. Do vírus ao câncer ---------- */
+  var iRoot = document.getElementById("tab-info");
+  var STAGES = [
+    {n:"1", name:"Infecção", tempo:"Contato com o vírus",
+     body:["O HPV (papilomavírus humano) entra pelo contato direto de pele ou mucosa durante a relação sexual e infecta as células da região.",
+           "Na maioria das vezes não causa sintoma nenhum, por isso a pessoa pode ter e transmitir o vírus sem saber.",
+           "Em geral o sistema imunológico elimina o vírus em até 2 anos, sem deixar consequências."],
+     todo:"Vacina antes do início da vida sexual e camisinha em todas as relações."},
+    {n:"2", name:"Persistência", tempo:"Quando o vírus não vai embora",
+     body:["Em uma parte das pessoas, o organismo não consegue eliminar o vírus e a infecção permanece por anos.",
+           "O risco é maior com os tipos de alto risco, principalmente o HPV 16 e o 18, responsáveis pela maior parte dos cânceres de colo do útero.",
+           "Fatores como tabagismo e imunidade baixa (por exemplo, HIV) aumentam a chance de persistência."],
+     todo:"Fazer o preventivo na idade indicada para acompanhar o que o vírus está causando nas células."},
+    {n:"3", name:"Lesão", tempo:"Células começam a mudar",
+     body:["O vírus persistente pode provocar alterações nas células, chamadas lesões precursoras. Elas ainda não são câncer.",
+           "Normalmente não dão sintomas: só são descobertas por exames, como o preventivo.",
+           "Quando encontradas nessa fase, as lesões podem ser tratadas, e o câncer é evitado."],
+     todo:"Exame preventivo regular e seguimento com o serviço de saúde se houver alteração.",
+     extra:"Verrugas genitais (condilomas) são outra manifestação do HPV, causadas principalmente pelos tipos 6 e 11, que são de baixo risco para câncer. Procure a UBS se notar qualquer verruga ou ferida."},
+    {n:"4", name:"Câncer", tempo:"Anos depois, se a lesão não for tratada",
+     body:["Sem tratamento, as lesões podem evoluir para câncer, processo que costuma levar de 10 a 20 anos.",
+           "O HPV está associado ao câncer do colo do útero e também aos de vulva, vagina, pênis, ânus e orofaringe.",
+           "Sintomas costumam aparecer tarde: sangramento fora da menstruação ou após a relação, corrimento diferente e dor. Descoberto cedo, o câncer de colo do útero tem alta chance de cura."],
+     todo:"Procurar a UBS diante de qualquer sinal. O melhor caminho é a prevenção, para nunca chegar aqui."}
+  ];
+  (function(){
+    iRoot.append(h("div", {class:"card"},
+      h("h2", {}, "O que é o HPV?"),
+      h("p", {}, "HPV é a sigla de papilomavírus humano, um vírus muito comum, transmitido principalmente por contato sexual. Existem mais de 200 tipos, e cerca de 40 infectam a região genital. Alguns causam verrugas, outros (de alto risco) podem levar ao câncer."),
+      h("div", {class:"facts"},
+        h("div", {class:"fact"}, h("strong", {}, "Mais de 200"), "tipos de HPV conhecidos"),
+        h("div", {class:"fact"}, h("strong", {}, "HPV 16 e 18"), "causam cerca de 70% dos cânceres de colo do útero"),
+        h("div", {class:"fact"}, h("strong", {}, "Quase 100%"), "dos cânceres de colo do útero têm relação com o HPV persistente"),
+        h("div", {class:"fact"}, h("strong", {}, "HPV 6 e 11"), "causam a maioria das verrugas genitais")
+      ),
+      h("p", {class:"src"}, "Base: Ministério da Saúde · INCA · OMS")
+    ));
+
+    var det = h("div", {class:"card"});
+    var stepper = h("div", {class:"stepper", role:"tablist"});
+    function showStage(k){
+      Array.prototype.forEach.call(stepper.children, function(b, j){ b.setAttribute("aria-selected", j === k ? "true" : "false"); });
+      var s = STAGES[k];
+      clear(det);
+      det.append(
+        h("h2", {}, s.n + ". " + s.name),
+        h("span", {class:"tag"}, s.tempo),
+        ul(s.body),
+        s.extra ? h("div", {class:"callout"}, s.extra) : null,
+        h("div", {class:"info"}, h("b", {}, "Como interromper o caminho: "), s.todo)
+      );
+      var nav = h("div", {class:"row", style:"margin-top:14px"});
+      if(k > 0) nav.append(h("button", {class:"btn sec", type:"button", onclick:function(){ showStage(k - 1); }}, "← " + STAGES[k-1].name));
+      if(k < STAGES.length - 1) nav.append(h("button", {class:"btn", type:"button", onclick:function(){ showStage(k + 1); }}, STAGES[k+1].name + " →"));
+      det.append(nav);
+    }
+    STAGES.forEach(function(s, k){
+      stepper.append(h("button", {type:"button", role:"tab", onclick:function(){ showStage(k); }},
+        h("span", {class:"n"}, s.n), s.name));
+    });
+    iRoot.append(h("div", {class:"card"},
+      h("h2", {}, "O caminho: da infecção ao câncer"),
+      h("p", {class:"muted"}, "Toque em cada etapa. O câncer é uma consequência rara e lenta, e existem formas de interromper o caminho em cada passo."),
+      stepper
+    ), det);
+    showStage(0);
+    iRoot.append(h("div", {class:"callout"}, "Resumo: infecção é comum e quase sempre passa sozinha. Só a infecção que persiste por anos pode causar lesões, e só lesões não tratadas podem virar câncer."));
+  })();
+
+  /* ---------- 3. Prevenção ---------- */
+  var pRoot = document.getElementById("tab-prev");
+  (function(){
+    var pillars = [
+      {ic:"💉", title:"Vacina (prevenção primária)",
+       pts:["Protege contra os tipos 6, 11, 16 e 18 do HPV.",
+            "Gratuita no SUS, para meninas e meninos de 9 a 14 anos, em dose única.",
+            "Funciona melhor quando aplicada antes do início da vida sexual.",
+            "Não trata uma infecção que já existe: ela previne.",
+            "Pessoas imunocomprometidas (HIV, transplantados, pacientes oncológicos) seguem esquema de 3 doses."],
+       src:"Ministério da Saúde · OMS"},
+      {ic:"🔬", title:"Preventivo (detecção precoce)",
+       pts:["Exame de Papanicolau: coleta células do colo do útero para achar alterações antes de virarem câncer.",
+            "Gratuito no SUS, nas UBS. A faixa prioritária é de 25 a 64 anos, para quem tem colo do útero e já iniciou a vida sexual.",
+            "Depois de dois exames normais com intervalo de 1 ano, a repetição é a cada 3 anos.",
+            "O SUS está incorporando o teste de DNA-HPV ao rastreamento. A periodicidade pode mudar, então confirme na UBS.",
+            "O exame não evita a infecção: ele permite tratar a lesão a tempo."],
+       src:"INCA · Ministério da Saúde"},
+      {ic:"🛡️", title:"Preservativo (camisinha)",
+       pts:["Reduz o risco de transmissão do HPV e protege contra outras ISTs e contra gravidez.",
+            "Não elimina 100% o risco do HPV, porque o vírus pode estar em áreas não cobertas.",
+            "Deve ser usado em todas as relações, do começo ao fim.",
+            "Camisinha externa e interna são distribuídas gratuitamente pelo SUS."],
+       src:"Ministério da Saúde · INCA"}
+    ];
+    var grid = h("div", {});
+    pillars.forEach(function(p, k){
+      var d = h("details", {}, h("summary", {}, p.ic + " " + p.title), ul(p.pts), h("div", {class:"src"}, "Base: " + p.src));
+      if(k === 0) d.setAttribute("open", "");
+      grid.append(d);
+    });
+    pRoot.append(h("div", {class:"card"},
+      h("h2", {}, "Três formas de se proteger"),
+      h("p", {class:"muted"}, "Elas se complementam: nenhuma substitui a outra. Toque para abrir cada uma."),
+      grid
+    ));
+
+    var PERFIS = [
+      {l:"Tenho de 9 a 14 anos", r:"Você está na idade da vacina gratuita no SUS (dose única), para meninas e meninos. Procure a UBS ou a vacinação na escola com sua caderneta."},
+      {l:"Tenho de 15 a 19 anos e não me vacinei", r:"O Ministério da Saúde manteve uma estratégia de resgate vacinal para essa faixa. A estratégia foi prorrogada, então confirme na UBS se ainda está vigente na sua cidade."},
+      {l:"Tenho vida sexual ativa", r:"Use preservativo em todas as relações. Ele reduz o risco de HPV e protege contra outras ISTs. Se tiver colo do útero e idade a partir de 25 anos, inclua o preventivo."},
+      {l:"Tenho colo do útero e de 25 a 64 anos", r:"Faça o preventivo gratuitamente na UBS, na periodicidade indicada pelo profissional de saúde, mesmo que já tenha tomado a vacina."},
+      {l:"Vivo com HIV, fui transplantado(a) ou faço tratamento oncológico", r:"O esquema da vacina é de 3 doses, e o acompanhamento deve ser orientado pela equipe de saúde. Converse com seu serviço de referência."}
+    ];
+    var out = h("div", {class:"info", "aria-live":"polite"}, "Escolha um perfil acima para ver a orientação.");
+    var opts = h("div", {class:"opts"});
+    PERFIS.forEach(function(p){
+      var b = h("button", {class:"opt", type:"button"}, p.l);
+      b.addEventListener("click", function(){
+        Array.prototype.forEach.call(opts.children, function(x){ x.classList.remove("sel"); });
+        b.classList.add("sel");
+        clear(out); out.append(h("b", {}, "Para você: "), p.r);
+      });
+      opts.append(b);
+    });
+    pRoot.append(h("div", {class:"card"},
+      h("h2", {}, "E eu, o que faço?"),
+      h("p", {class:"muted"}, "Escolha o perfil que mais combina com você."),
+      opts, out,
+      h("div", {class:"callout"}, "Quem tem verruga, ferida ou qualquer sinal diferente na região genital deve procurar a UBS. Não existe remédio que “mata o vírus”, mas as lesões podem ser tratadas. Homens também devem procurar atendimento se notarem alterações.")
+    ));
+  })();
+
+  /* ---------- 4. Perguntas finais (com contagem da turma) ---------- */
+  var qRoot = document.getElementById("tab-perg");
+  var PERGS = [
+    {q:"Você sabe o que é o HPV e como é transmitido?", opts:["Sim","Não","Mais ou menos"],
+     info:["HPV é o papilomavírus humano, um vírus muito comum com mais de 200 tipos.",
+           "É transmitido por contato direto de pele ou mucosa durante a relação sexual (vaginal, anal ou oral), mesmo sem penetração.",
+           "Quase sempre não dá sintomas, então a pessoa pode transmitir sem saber. A transmissão da mãe para o bebê é rara."],
+     src:"Ministério da Saúde · INCA"},
+    {q:"Você sabia que o HPV pode causar câncer de colo de útero?", opts:["Sim","Não","Já ouvi falar"],
+     info:["Sim. Quase todos os casos de câncer de colo do útero estão ligados à infecção persistente pelo HPV de alto risco.",
+           "O HPV também está associado a cânceres de vulva, vagina, pênis, ânus e orofaringe.",
+           "É um dos poucos cânceres que podem ser prevenidos com vacina e detecção precoce."],
+     src:"OMS · INCA"},
+    {q:"Você sabia que a vacina contra o HPV é gratuita no SUS?", opts:["Sim","Não","Sabia, mas não sei onde tomar"],
+     info:["A vacina é gratuita no SUS para meninas e meninos de 9 a 14 anos, em dose única.",
+           "É aplicada nas UBS e também em ações nas escolas. Leve a caderneta de vacinação.",
+           "Quem tem imunocomprometimento segue esquema de 3 doses. Para quem perdeu a idade, pode haver estratégia de resgate: pergunte na UBS."],
+     src:"Ministério da Saúde"},
+    {q:"Você conhece alguém que faz o preventivo com regularidade?", opts:["Sim","Não","Não sei"],
+     info:["O preventivo (Papanicolau) é gratuito nas UBS e é o principal exame para encontrar lesões antes que virem câncer.",
+           "A faixa prioritária do SUS é de 25 a 64 anos para quem tem colo do útero e já iniciou a vida sexual.",
+           "Uma boa ação: incentivar mãe, tias, avós e vizinhas a manter o exame em dia."],
+     src:"INCA · Ministério da Saúde"},
+    {q:"O que você acha que impede as pessoas de procurar a vacina ou o exame?", multi:true,
+     opts:[
+       {l:"Vergonha", n:"O exame é feito por profissional de saúde, dura poucos minutos e é um atendimento sigiloso e respeitoso."},
+       {l:"Medo (agulha ou exame)", n:"A vacina de dose única é uma picada rápida. No exame, é normal sentir algum desconforto leve: converse com o profissional e peça que explique cada passo."},
+       {l:"Falta de informação", n:"Muita gente não sabe que o HPV causa câncer nem que existe vacina. Informação confiável muda isso."},
+       {l:"Mitos e fake news", n:"Boatos sobre efeitos da vacina e sobre o exame afastam as pessoas. Busque sempre fontes oficiais."},
+       {l:"Não saber que é gratuito", n:"Vacina, preventivo e preservativo estão disponíveis gratuitamente no SUS."},
+       {l:"Dificuldade de acesso", n:"Horário de funcionamento e distância atrapalham. Por isso a vacinação também acontece nas escolas."},
+       {l:"Tabu sobre sexualidade", n:"Quando não se fala de sexualidade em casa ou na escola, fica difícil falar de prevenção. Conversar é o primeiro passo."}
+     ],
+     info:["Todas essas barreiras são reais, e a maioria pode ser vencida com informação confiável, acolhimento e acesso facilitado.",
+           "O Ministério da Saúde leva a vacinação para as escolas justamente para facilitar o acesso dos adolescentes."],
+     src:"Ministério da Saúde · INCA"}
+  ];
+  var votes = PERGS.map(function(p){ return p.opts.map(function(){ return 0; }); });
+
+  function renderPerg(){
+    clear(qRoot);
+    qRoot.append(h("div", {class:"callout"}, "Dica para a palestra: cada toque em uma opção soma um voto na contagem da turma. Depois do toque, aparece a informação “Você sabia?”."));
+    PERGS.forEach(function(p, qi){
+      var card = h("div", {class:"card"});
+      card.append(h("div", {class:"muted small"}, "Pergunta " + (qi + 1) + " de " + PERGS.length), h("h3", {style:"font-size:1.2em"}, p.q));
+      var optsBox = h("div", {class:"opts"});
+      var barsBox = h("div", {class:"bars"});
+      var infoBox = h("div", {});
+      function drawBars(){
+        clear(barsBox);
+        var total = votes[qi].reduce(function(a, b){ return a + b; }, 0);
+        if(!total) return;
+        p.opts.forEach(function(o, oi){
+          var label = typeof o === "string" ? o : o.l;
+          var i = h("i", {});
+          i.style.width = (votes[qi][oi] / total * 100) + "%";
+          barsBox.append(h("div", {class:"bar"}, h("span", {class:"l"}, label), h("span", {class:"b"}, i), h("span", {}, String(votes[qi][oi]))));
+        });
+      }
+      p.opts.forEach(function(o, oi){
+        var label = typeof o === "string" ? o : o.l;
+        var cnt = h("span", {class:"cnt"}, "0");
+        var b = h("button", {class:"opt", type:"button"}, label, cnt);
+        b.addEventListener("click", function(){
+          votes[qi][oi]++;
+          cnt.textContent = String(votes[qi][oi]);
+          b.classList.add("sel");
+          drawBars();
+          clear(infoBox);
+          var box = h("div", {class:"info"});
+          if(p.multi){ box.append(h("b", {}, label + ": "), o.n, h("div", {style:"margin-top:8px"}, ul(p.info))); }
+          else { box.append(h("b", {}, "Você sabia?"), ul(p.info)); }
+          box.append(h("div", {class:"src"}, "Base: " + p.src));
+          infoBox.append(box);
+        });
+        optsBox.append(b);
+      });
+      var reset = h("button", {class:"chip-btn", type:"button", style:"margin-top:8px", onclick:function(){
+        votes[qi] = p.opts.map(function(){ return 0; });
+        Array.prototype.forEach.call(optsBox.children, function(x){ x.classList.remove("sel"); x.querySelector(".cnt").textContent = "0"; });
+        clear(barsBox); clear(infoBox);
+      }}, "Zerar contagem");
+      card.append(optsBox, barsBox, infoBox, reset);
+      qRoot.append(card);
+    });
+  }
+  renderPerg();
+
+  /* ---------- 5. Roda de conversa ---------- */
+  var cRoot = document.getElementById("tab-conv");
+  var CONV = [
+    {q:"Por que muitas pessoas não falam sobre o HPV?",
+     pts:["Tabu em torno da sexualidade, em casa e na escola.",
+          "Vergonha e medo de julgamento, principalmente por ser uma infecção de transmissão sexual.",
+          "Como quase nunca dá sintomas, as pessoas acham que “não é comigo”.",
+          "Medo de que “HPV” signifique “câncer”, quando na verdade a maioria das infecções passa sozinha.",
+          "Falta de educação em saúde com informação clara."],
+     fecho:"HPV é muito comum, e ter o vírus não é motivo de culpa. Falar sobre o assunto é o que permite prevenir."},
+    {q:"Como conversar sobre isso com um amigo sem se assustar?",
+     pts:["Comece pelo que é bom de saber: existe vacina gratuita e existe exame para detectar cedo.",
+          "Fale com cuidado e sem acusar. Frases como “eu soube que…” funcionam melhor que “você deveria…”.",
+          "Escolha um momento tranquilo e privado.",
+          "Ofereça companhia: ir junto à UBS torna tudo mais fácil.",
+          "Respeite a privacidade do amigo e não repasse o que ele contou.",
+          "Se o amigo tem diagnóstico, lembre que a maioria das infecções se resolve e que o acompanhamento com profissional de saúde é o caminho."],
+     fecho:"Cuidar de quem a gente gosta inclui conversar sobre saúde, sem medo e sem julgamento."},
+    {q:"Onde você buscaria uma informação confiável?",
+     pts:["Na UBS, com médicos, enfermeiros e agentes de saúde.",
+          "No site do Ministério da Saúde (gov.br/saude) e no Disque Saúde 136.",
+          "No site do INCA (gov.br/inca) e na página da OMS (who.int).",
+          "Desconfie de correntes de WhatsApp e de postagens sem fonte. Confira quem escreveu, a data e se há referência oficial.",
+          "Na escola, em ações do Programa Saúde na Escola e com professores de ciências e biologia."],
+     fecho:"Antes de compartilhar uma informação de saúde, pergunte: quem disse? Qual é a fonte? Está atualizada?"}
+  ];
+  (function(){
+    cRoot.append(h("div", {class:"callout"}, "Este bloco é para debate em grupo. Toque em “Pontos para a conversa” depois que a turma opinar."));
+    CONV.forEach(function(c, k){
+      cRoot.append(h("div", {class:"card"},
+        h("div", {class:"muted small"}, "Conversa " + (k + 1) + " de " + CONV.length),
+        h("h3", {style:"font-size:1.3em"}, c.q),
+        h("details", {}, h("summary", {}, "Pontos para a conversa"), ul(c.pts), h("div", {class:"info"}, c.fecho))
+      ));
+    });
+    cRoot.append(h("div", {class:"card"},
+      h("h3", {}, "Mensagem final"),
+      h("p", {}, "Vacina aos 9–14 anos, camisinha em todas as relações e preventivo em dia na vida adulta. Informação confiável salva vidas, e o câncer de colo do útero pode ser evitado."),
+      h("p", {class:"src"}, "A OMS tem uma meta global de eliminação do câncer do colo do útero, baseada em vacinação, rastreamento e tratamento das lesões.")
+    ));
+  })();
+})();
+</script>
+</body>
+</html>
